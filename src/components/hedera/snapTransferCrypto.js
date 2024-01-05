@@ -1,21 +1,17 @@
-async function snapTransferCryptoFcn(walletData) {
+async function snapTransferCryptoFcn(walletData, snapId, args) {
 	console.log(`\n=======================================`);
 	console.log(`- Invoking transferCrypto...🟠`);
 
-	const snapId = `npm:@hashgraph/hedera-wallet-snap`;
-
-	const externalAccountParams = {
-		externalAccount: {
-			accountIdOrEvmAddress: "0.0.1804",
-			curve: "ECDSA_SECP256K1",
-		},
-	};
+	const network = walletData[2];
+	const receiverAddress = args[0];
+	const hbarAmount = parseFloat(args[1]);
+	const maxFee = 0.1;
 
 	const transfers = [
 		{
 			asset: "HBAR",
-			to: "0xb49efeb88938b9046365dc347c7d40213b6c8f93",
-			amount: 10, // in Hbar
+			to: receiverAddress,
+			amount: hbarAmount, // in Hbar
 		},
 	];
 
@@ -30,15 +26,10 @@ async function snapTransferCryptoFcn(walletData) {
 			request: {
 				method: "transferCrypto",
 				params: {
-					network: "previewnet",
+					network: network,
 					transfers,
 					memo,
-					maxFee: undefined,
-					/* 
-				Uncomment the below line if you want to connect 
-				to a non-metamask account
-			  */
-					// ...externalAccountParams,
+					maxFee: maxFee,
 				},
 			},
 		},

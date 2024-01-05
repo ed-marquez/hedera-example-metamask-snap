@@ -1,48 +1,27 @@
-async function snapGetAccountInfoFcn(walletData) {
+async function snapGetAccountInfoFcn(walletData, snapId) {
 	console.log(`\n=======================================`);
 	console.log(`- Invoking GetAccountInfo...🟠`);
 
-	const snapId = `npm:@hashgraph/hedera-wallet-snap`;
+	const network = walletData[2];
 
-	// await window.ethereum.request({
-	// 	method: "wallet_invokeSnap",
-	// 	params: {
-	// 		snapId,
-	// 		request: {
-	// 			method: "hello",
-	// 			params: {
-	// 				network: "testnet",
-	// 				mirrorNodeUrl: "https://testnet.mirrornode.hedera.com",
-	// 			},
-	// 		},
-	// 	},
-	// });
-
-	const externalAccountParams = {
-		externalAccount: {
-			accountIdOrEvmAddress: "0.0.141617",
-			curve: "ED25519",
-		},
-	};
-
-	const a = await window.ethereum.request({
+	const response = await window.ethereum.request({
 		method: "wallet_invokeSnap",
 		params: {
 			snapId,
 			request: {
 				method: "getAccountInfo",
 				params: {
-					network: "previewnet",
-					mirrorNodeUrl: "https://previewnet.mirrornode.hedera.com",
-					/*
-				Uncomment the below line if you want to connect
-				to a non-metamask account
-				...externalAccountParams,
-			  */
+					network: network,
+					mirrorNodeUrl: `https://${network}.mirrornode.hedera.com`,
 				},
 			},
 		},
 	});
-	console.log("a", a);
+	console.log("accountInfo:", response);
+
+	const snapAccountEvmAddress = response.accountInfo.evmAddress;
+	const snapAccountBalance = response.accountInfo.balance.hbars;
+	const outText = `Snap Account ${snapAccountEvmAddress} has ${snapAccountBalance} hbars`;
+	return [outText];
 }
 export default snapGetAccountInfoFcn;

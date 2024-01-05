@@ -25,7 +25,7 @@ async function walletConnectFcn() {
 			{
 				chainName: `Hedera ${network}`,
 				chainId: chainId,
-				nativeCurrency: { name: "HBAR", symbol: "ℏℏ", decimals: 18 },
+				nativeCurrency: { name: "HBAR", symbol: "HBAR", decimals: 18 },
 				rpcUrls: [`https://${network}.hashio.io/api`],
 				blockExplorerUrls: [`https://hashscan.io/${network}/`],
 			},

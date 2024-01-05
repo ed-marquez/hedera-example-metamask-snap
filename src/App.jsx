@@ -5,12 +5,13 @@ import SetterGroup from "./components/SetterGroup.jsx";
 import GetterGroup from "./components/GetterGroup.jsx";
 import walletConnectFcn from "./components/hedera/walletConnect.js";
 import snapInstallFcn from "./components/hedera/snapInstall.js";
-import contractDeployFcn from "./components/hedera/contractDeploy.js";
-import contractExecuteFcn from "./components/hedera/contractExecute.js";
-import contractCallViewFcn from "./components/hedera/contractCallView.js";
+// import snapHelloWorldFcn from "./components/hedera/snapHelloWorld.js";
+import snapGetAccountInfoFcn from "./components/hedera/snapGetAccountInfo.js";
+import snapTransferCryptoFcn from "./components/hedera/snapTransferCrypto.js";
 import "./styles/App.css";
 
 function App() {
+	const [snapId, setSnapId] = useState("npm:@hashgraph/hedera-wallet-snap");
 	const [walletData, setWalletData] = useState();
 	const [account, setAccount] = useState();
 	const [network, setNetwork] = useState();
@@ -20,7 +21,9 @@ function App() {
 	const [gPartName, set_gPartName] = useState();
 
 	const [connectText, setConnectText] = useState("🔌 Connect here...");
-	const [snapText, setSnapText] = useState("Install the snap...");
+	const [snapInstallText, setSnapInstallText] = useState("Install the snap...");
+	const [snapHelloText, setSnapHelloText] = useState("Call a Hello World function...");
+	const [snapInfoText, setSnapInfoText] = useState("Get Snap Account Info...");
 	const [deployText, setDeployText] = useState("");
 	const [setterGroupText, setSetterGroupText] = useState("Store a part name and corresponding amount on-chain");
 	const [getterGroupText, setGetterGroupText] = useState("Check amount available for a given part");
@@ -55,24 +58,39 @@ function App() {
 		} else if (contract !== undefined) {
 			setDeployText(`You already have contract ${contract} ✅`);
 		} else {
-			await snapInstallFcn();
-			setSnapText(`Installation OK ✅`);
+			await snapInstallFcn(snapId);
+			setSnapInstallText(`Snap installation OK ✅`);
 			// setDeployLink(`https://hashscan.io/${network}/address/${newContractAddress}`);
 			// setSetterGroupText("Store a part name and corresponding amount on-chain");
 		}
 	}
 
-	async function contractDeploy() {
+	// async function snapHelloWorld() {
+	// 	if (account === undefined) {
+	// 		setDeployText("🛑Connect a wallet first!🛑");
+	// 	} else if (contract !== undefined) {
+	// 		setDeployText(`You already have contract ${contract} ✅`);
+	// 	} else {
+	// 		await snapHelloWorldFcn(walletData, snapId);
+	// 		setSnapHelloText(`Hello World OK ✅`);
+	// 		// setDeployText(`Deployed contract ${newContractAddress} ✅`);
+	// 		// setDeployLink(`https://hashscan.io/${network}/address/${newContractAddress}`);
+	// 		// setSetterGroupText("Store a part name and corresponding amount on-chain");
+	// 	}
+	// }
+
+	async function snapGetAccountInfo() {
 		if (account === undefined) {
 			setDeployText("🛑Connect a wallet first!🛑");
 		} else if (contract !== undefined) {
 			setDeployText(`You already have contract ${contract} ✅`);
 		} else {
-			const newContractAddress = await contractDeployFcn(walletData);
-			setContract(newContractAddress);
-			setDeployText(`Deployed contract ${newContractAddress} ✅`);
-			setDeployLink(`https://hashscan.io/${network}/address/${newContractAddress}`);
-			setSetterGroupText("Store a part name and corresponding amount on-chain");
+			const infoText = await snapGetAccountInfoFcn(walletData, snapId);
+			setSnapInfoText(infoText);
+			// setContract(newContractAddress);
+			// setDeployText(`Deployed contract ${newContractAddress} ✅`);
+			// setDeployLink(`https://hashscan.io/${network}/address/${newContractAddress}`);
+			// setSetterGroupText("Store a part name and corresponding amount on-chain");
 		}
 	}
 
@@ -92,52 +110,26 @@ function App() {
 			set_sPartAmount(new_sPartAmount);
 		}
 	}
-	function handle_gPartNameChange(event) {
-		let new_gPartName = event.target.value;
-		if (new_gPartName === "") {
-			set_gPartName();
-		} else {
-			set_gPartName(new_gPartName);
-		}
+
+	async function snapTransferCrypto() {
+		// if (account === undefined || contract === undefined) {
+		// 	setSetterGroupText("🛑Connect a wallet AND deploy a contract!🛑");
+		// } else if (sPartName === undefined || sPartAmount === undefined) {
+		// 	setSetterGroupText("🛑Enter a valid part name and address!🛑");
+		// } else {
+		setSetterGroupText(`Storing ${sPartAmount} unit(s) of ${sPartName} on-chain...`);
+
+		// const [txHash, outText] = await snapTransferCryptoFcn(walletData, snapId, [sPartName, sPartAmount]);
+		await snapTransferCryptoFcn(walletData, snapId, [sPartName, sPartAmount]);
+
+		// if (txHash !== undefined && outText !== undefined) {
+		// 	setSetterGroupText(`${outText} | Store a new part name and corresponding amount!`);
+		// 	set_setterGroupLink(`https://hashscan.io/${network}/tx/${txHash}`);
+		// } else {
+		// 	setSetterGroupText(`Transaction failed - try again 🔴`);
+		// }
+		// }
 	}
-
-	async function contractExecute() {
-		if (account === undefined || contract === undefined) {
-			setSetterGroupText("🛑Connect a wallet AND deploy a contract!🛑");
-		} else if (sPartName === undefined || sPartAmount === undefined) {
-			setSetterGroupText("🛑Enter a valid part name and address!🛑");
-		} else {
-			setSetterGroupText(`Storing ${sPartAmount} unit(s) of ${sPartName} on-chain...`);
-
-			const [txHash, outText] = await contractExecuteFcn(walletData, contract, [sPartName, sPartAmount]);
-
-			if (txHash !== undefined && outText !== undefined) {
-				setSetterGroupText(`${outText} | Store a new part name and corresponding amount!`);
-				set_setterGroupLink(`https://hashscan.io/${network}/tx/${txHash}`);
-			} else {
-				setSetterGroupText(`Transaction failed - try again 🔴`);
-			}
-		}
-	}
-
-	async function contractCallView() {
-		if (gPartName === undefined) {
-			setGetterGroupText("🛑Enter a valid part name to check the amount!🛑");
-		} else {
-			setGetterGroupText(`Getting current amount of ${gPartName} from contract...`);
-
-			const outText = await contractCallViewFcn(walletData, network, contract, gPartName);
-
-			if (outText !== undefined) {
-				setGetterGroupText("Check amount available for a given part");
-				setAmountText(outText);
-			} else {
-				setGetterGroupText(`Transaction failed - try again 🔴`);
-			}
-		}
-	}
-
-	//=====================
 
 	return (
 		<div className="App">
@@ -145,9 +137,11 @@ function App() {
 
 			<MyGroup fcn={connectWallet} buttonLabel={"Connect Wallet"} text={connectText} link={connectLink} />
 
-			<MyGroup fcn={snapInstall} buttonLabel={"Install Snap"} text={snapText} link={""} />
+			<MyGroup fcn={snapInstall} buttonLabel={"Install Snap"} text={snapInstallText} link={""} />
 
-			<MyGroup fcn={contractDeploy} buttonLabel={"Deploy Contract"} text={deployText} link={deployLink} />
+			{/* <MyGroup fcn={snapHelloWorld} buttonLabel={"Hello World"} text={snapHelloText} link={""} /> */}
+
+			<MyGroup fcn={snapGetAccountInfo} buttonLabel={"Get Account Info"} text={snapInfoText} link={deployLink} />
 
 			<SetterGroup
 				text_app={setterGroupText}
@@ -159,11 +153,11 @@ function App() {
 				fcnI2_app={handle_sPartAmountChange}
 				placeholderTxt2_app={"Amount"}
 				//
-				fcnB1_app={contractExecute}
-				buttonLabel_app={"Store Info"}
+				fcnB1_app={snapTransferCrypto}
+				buttonLabel_app={"Snap HBAR Transfer"}
 			/>
 
-			<GetterGroup
+			{/* <GetterGroup
 				text_app={getterGroupText}
 				//
 				fcnI1_app={handle_gPartNameChange}
@@ -171,7 +165,7 @@ function App() {
 				//
 				fcnB1_app={contractCallView}
 				buttonLabel_app={"Get Info"}
-			/>
+			/> */}
 
 			<MyText text={amountText} />
 

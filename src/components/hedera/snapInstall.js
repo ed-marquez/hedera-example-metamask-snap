@@ -1,14 +1,12 @@
-async function snapInstallFcn() {
+async function snapInstallFcn(snapId) {
 	console.log(`\n=======================================`);
 	console.log(`- Installing Hedera Wallet Snap...🟠`);
 
-	// // METAMASK SNAPS FUNCTIONALITY
-	const snapId = `npm:@hashgraph/hedera-wallet-snap`;
+	console.log(`SnapId: ${snapId}`);
 
 	let snaps = await window.ethereum.request({
 		method: "wallet_getSnaps",
 	});
-
 	console.log("Installed snaps...", snaps);
 
 	try {
