@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import MyText from "./components/MyText.jsx";
 import MyGroup from "./components/MyGroup.jsx";
 import SetterGroup from "./components/SetterGroup.jsx";
-import GetterGroup from "./components/GetterGroup.jsx";
 import walletConnectFcn from "./components/hedera/walletConnect.js";
 import snapInstallFcn from "./components/hedera/snapInstall.js";
-// import snapHelloWorldFcn from "./components/hedera/snapHelloWorld.js";
 import snapGetAccountInfoFcn from "./components/hedera/snapGetAccountInfo.js";
 import snapTransferCryptoFcn from "./components/hedera/snapTransferCrypto.js";
 import "./styles/App.css";
@@ -14,121 +11,91 @@ function App() {
 	const [snapId, setSnapId] = useState("npm:@hashgraph/hedera-wallet-snap");
 	const [walletData, setWalletData] = useState();
 	const [account, setAccount] = useState();
-	const [network, setNetwork] = useState();
-	const [contract, setContract] = useState();
-	const [sPartName, set_sPartName] = useState();
-	const [sPartAmount, set_sPartAmount] = useState();
-	const [gPartName, set_gPartName] = useState();
+	const [network, setNetwork] = useState("previewnet");
+	const [receiverAddress, setReceiverAddress] = useState();
+	const [hbarAmount, setHbarAmount] = useState();
 
-	const [connectText, setConnectText] = useState("🔌 Connect here...");
-	const [snapInstallText, setSnapInstallText] = useState("Install the snap...");
-	const [snapHelloText, setSnapHelloText] = useState("Call a Hello World function...");
-	const [snapInfoText, setSnapInfoText] = useState("Get Snap Account Info...");
-	const [deployText, setDeployText] = useState("");
-	const [setterGroupText, setSetterGroupText] = useState("Store a part name and corresponding amount on-chain");
-	const [getterGroupText, setGetterGroupText] = useState("Check amount available for a given part");
-	const [amountText, setAmountText] = useState("");
+	const [connectText, setConnectText] = useState("🔌 Start here...");
+	const [snapInstallText, setSnapInstallText] = useState();
+	const [snapInfoText, setSnapInfoText] = useState();
+	const [snapTransferText, setSnapTransferText] = useState("");
 
 	const [connectLink, setConnectLink] = useState("");
-	const [deployLink, setDeployLink] = useState("");
-	const [setterGroupLink, set_setterGroupLink] = useState("");
+	const [infoLink, setInfoLink] = useState("");
+	const [transferGroupLink, setTransferGroupLink] = useState("");
 
 	async function connectWallet() {
 		if (account !== undefined) {
 			setConnectText(`🔌 Account ${account} already connected ⚡ ✅`);
 		} else {
-			const wData = await walletConnectFcn();
+			const wData = await walletConnectFcn(network);
 
 			let newAccount = wData[0];
-			let newNetwork = wData[2];
 			if (newAccount !== undefined) {
 				setConnectText(`🔌 Account ${newAccount} connected ⚡ ✅`);
-				setConnectLink(`https://hashscan.io/${newNetwork}/account/${newAccount}`);
+				setConnectLink(`https://hashscan.io/${network}/account/${newAccount}`);
 				setWalletData(wData);
 				setAccount(newAccount);
-				setNetwork(newNetwork);
-				setDeployText();
+				setSnapInstallText();
+				setSnapInfoText();
+				setSnapTransferText();
 			}
 		}
 	}
 
 	async function snapInstall() {
 		if (account === undefined) {
-			setDeployText("🛑Connect a wallet first!🛑");
-		} else if (contract !== undefined) {
-			setDeployText(`You already have contract ${contract} ✅`);
+			setSnapInstallText("🛑Connect a wallet first!🛑");
 		} else {
 			await snapInstallFcn(snapId);
 			setSnapInstallText(`Snap installation OK ✅`);
-			// setDeployLink(`https://hashscan.io/${network}/address/${newContractAddress}`);
-			// setSetterGroupText("Store a part name and corresponding amount on-chain");
 		}
 	}
-
-	// async function snapHelloWorld() {
-	// 	if (account === undefined) {
-	// 		setDeployText("🛑Connect a wallet first!🛑");
-	// 	} else if (contract !== undefined) {
-	// 		setDeployText(`You already have contract ${contract} ✅`);
-	// 	} else {
-	// 		await snapHelloWorldFcn(walletData, snapId);
-	// 		setSnapHelloText(`Hello World OK ✅`);
-	// 		// setDeployText(`Deployed contract ${newContractAddress} ✅`);
-	// 		// setDeployLink(`https://hashscan.io/${network}/address/${newContractAddress}`);
-	// 		// setSetterGroupText("Store a part name and corresponding amount on-chain");
-	// 	}
-	// }
 
 	async function snapGetAccountInfo() {
 		if (account === undefined) {
-			setDeployText("🛑Connect a wallet first!🛑");
-		} else if (contract !== undefined) {
-			setDeployText(`You already have contract ${contract} ✅`);
+			setSnapInfoText("🛑Connect a wallet first!🛑");
 		} else {
-			const infoText = await snapGetAccountInfoFcn(walletData, snapId);
+			const infoText = await snapGetAccountInfoFcn(network, walletData, snapId);
 			setSnapInfoText(infoText);
-			// setContract(newContractAddress);
 			// setDeployText(`Deployed contract ${newContractAddress} ✅`);
 			// setDeployLink(`https://hashscan.io/${network}/address/${newContractAddress}`);
-			// setSetterGroupText("Store a part name and corresponding amount on-chain");
 		}
 	}
 
-	function handle_sPartNameChange(event) {
-		let new_sPartName = event.target.value;
-		if (new_sPartName === "") {
-			set_sPartName();
+	function handle_AdressChange(event) {
+		let newAddress = event.target.value;
+		if (newAddress === "") {
+			setReceiverAddress();
 		} else {
-			set_sPartName(new_sPartName);
+			setReceiverAddress(newAddress);
 		}
 	}
-	function handle_sPartAmountChange(event) {
-		let new_sPartAmount = event.target.value;
-		if (new_sPartAmount === "") {
-			set_sPartAmount();
+	function handle_AmountChange(event) {
+		let newAmount = event.target.value;
+		if (newAmount === "") {
+			setHbarAmount();
 		} else {
-			set_sPartAmount(new_sPartAmount);
+			setHbarAmount(newAmount);
 		}
 	}
 
 	async function snapTransferCrypto() {
-		// if (account === undefined || contract === undefined) {
-		// 	setSetterGroupText("🛑Connect a wallet AND deploy a contract!🛑");
-		// } else if (sPartName === undefined || sPartAmount === undefined) {
-		// 	setSetterGroupText("🛑Enter a valid part name and address!🛑");
-		// } else {
-		setSetterGroupText(`Storing ${sPartAmount} unit(s) of ${sPartName} on-chain...`);
+		if (account === undefined) {
+			setSnapTransferText("🛑Connect a wallet first!🛑");
+		} else {
+			setSnapTransferText(`Storing ${hbarAmount} unit(s) of ${receiverAddress} on-chain...`);
 
-		// const [txHash, outText] = await snapTransferCryptoFcn(walletData, snapId, [sPartName, sPartAmount]);
-		await snapTransferCryptoFcn(walletData, snapId, [sPartName, sPartAmount]);
+			// const [txHash, outText] = await snapTransferCryptoFcn(walletData, snapId, [sPartName, sPartAmount]);
+			await snapTransferCryptoFcn(network, walletData, snapId, [receiverAddress, hbarAmount]);
 
-		// if (txHash !== undefined && outText !== undefined) {
-		// 	setSetterGroupText(`${outText} | Store a new part name and corresponding amount!`);
-		// 	set_setterGroupLink(`https://hashscan.io/${network}/tx/${txHash}`);
-		// } else {
-		// 	setSetterGroupText(`Transaction failed - try again 🔴`);
-		// }
-		// }
+			// if (txHash !== undefined && outText !== undefined) {
+			// 	setSetterGroupText(`${outText} | Store a new part name and corresponding amount!`);
+			// 	set_setterGroupLink(`https://hashscan.io/${network}/tx/${txHash}`);
+			// } else {
+			// 	setSetterGroupText(`Transaction failed - try again 🔴`);
+			// }
+		}
 	}
 
 	return (
@@ -139,35 +106,21 @@ function App() {
 
 			<MyGroup fcn={snapInstall} buttonLabel={"Install Snap"} text={snapInstallText} link={""} />
 
-			{/* <MyGroup fcn={snapHelloWorld} buttonLabel={"Hello World"} text={snapHelloText} link={""} /> */}
-
-			<MyGroup fcn={snapGetAccountInfo} buttonLabel={"Get Account Info"} text={snapInfoText} link={deployLink} />
+			<MyGroup fcn={snapGetAccountInfo} buttonLabel={"Get Snap Account Info"} text={snapInfoText} link={infoLink} />
 
 			<SetterGroup
-				text_app={setterGroupText}
-				link_app={setterGroupLink}
+				text_app={snapTransferText}
+				link_app={transferGroupLink}
 				//
-				fcnI1_app={handle_sPartNameChange}
-				placeholderTxt1_app={"Part name"}
+				fcnI1_app={handle_AdressChange}
+				placeholderTxt1_app={"Receiver address"}
 				//
-				fcnI2_app={handle_sPartAmountChange}
-				placeholderTxt2_app={"Amount"}
+				fcnI2_app={handle_AmountChange}
+				placeholderTxt2_app={"HBAR amount"}
 				//
 				fcnB1_app={snapTransferCrypto}
-				buttonLabel_app={"Snap HBAR Transfer"}
+				buttonLabel_app={"Transfer HBAR w/ Snap"}
 			/>
-
-			{/* <GetterGroup
-				text_app={getterGroupText}
-				//
-				fcnI1_app={handle_gPartNameChange}
-				placeholderTxt1_app={"Part name"}
-				//
-				fcnB1_app={contractCallView}
-				buttonLabel_app={"Get Info"}
-			/> */}
-
-			<MyText text={amountText} />
 
 			<div className="logo">
 				<div className="symbol">

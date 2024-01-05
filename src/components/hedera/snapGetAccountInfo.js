@@ -1,8 +1,6 @@
-async function snapGetAccountInfoFcn(walletData, snapId) {
+async function snapGetAccountInfoFcn(network, walletData, snapId) {
 	console.log(`\n=======================================`);
 	console.log(`- Invoking GetAccountInfo...🟠`);
-
-	const network = walletData[2];
 
 	const response = await window.ethereum.request({
 		method: "wallet_invokeSnap",
@@ -21,7 +19,7 @@ async function snapGetAccountInfoFcn(walletData, snapId) {
 
 	const snapAccountEvmAddress = response.accountInfo.evmAddress;
 	const snapAccountBalance = response.accountInfo.balance.hbars;
-	const outText = `Snap Account ${snapAccountEvmAddress} has ${snapAccountBalance} hbars`;
+	const outText = `Snap Account ${snapAccountEvmAddress} has ${snapAccountBalance} ℏ`;
 	return [outText];
 }
 export default snapGetAccountInfoFcn;

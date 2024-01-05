@@ -1,8 +1,7 @@
-async function snapTransferCryptoFcn(walletData, snapId, args) {
+async function snapTransferCryptoFcn(network, walletData, snapId, args) {
 	console.log(`\n=======================================`);
 	console.log(`- Invoking transferCrypto...🟠`);
 
-	const network = walletData[2];
 	const receiverAddress = args[0];
 	const hbarAmount = parseFloat(args[1]);
 	const maxFee = 0.1;

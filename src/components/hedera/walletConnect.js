@@ -1,8 +1,7 @@
 import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers } from "ethers";
-const network = "previewnet";
 
-async function walletConnectFcn() {
+async function walletConnectFcn(network) {
 	console.log(`\n=======================================`);
 
 	// ETHERS PROVIDER
@@ -47,7 +46,7 @@ async function walletConnectFcn() {
 			return;
 		});
 
-	return [selectedAccount, provider, network];
+	return [selectedAccount, provider];
 }
 
 export default walletConnectFcn;
