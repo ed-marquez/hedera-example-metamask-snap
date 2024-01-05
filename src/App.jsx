@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-// import MyText from "./components/MyText.jsx";
-// import SetterGroup from "./components/SetterGroup.jsx";
-// import GetterGroup from "./components/GetterGroup.jsx";
+import MyText from "./components/MyText.jsx";
 import MyGroup from "./components/MyGroup.jsx";
+import SetterGroup from "./components/SetterGroup.jsx";
+import GetterGroup from "./components/GetterGroup.jsx";
 import walletConnectFcn from "./components/hedera/walletConnect.js";
 import snapInstallFcn from "./components/hedera/snapInstall.js";
-import snapGetAccountInfoFcn from "./components/hedera/snapGetAccountInfo.js";
-import snapTransferCryptoFcn from "./components/hedera/snapTransferCrypto.js";
+import contractDeployFcn from "./components/hedera/contractDeploy.js";
 import contractExecuteFcn from "./components/hedera/contractExecute.js";
 import contractCallViewFcn from "./components/hedera/contractCallView.js";
 import "./styles/App.css";
@@ -21,7 +20,7 @@ function App() {
 	const [gPartName, set_gPartName] = useState();
 
 	const [connectText, setConnectText] = useState("🔌 Connect here...");
-	const [snapText, setSnapText] = useState("Install Hedera Wallet Snap");
+	const [snapText, setSnapText] = useState("Install the snap...");
 	const [deployText, setDeployText] = useState("");
 	const [setterGroupText, setSetterGroupText] = useState("Store a part name and corresponding amount on-chain");
 	const [getterGroupText, setGetterGroupText] = useState("Check amount available for a given part");
@@ -56,32 +55,21 @@ function App() {
 		} else if (contract !== undefined) {
 			setDeployText(`You already have contract ${contract} ✅`);
 		} else {
-			await snapInstallFcn(walletData);
-
-			setSnapText(`Button clicked ✅`);
+			await snapInstallFcn();
+			setSnapText(`Installation OK ✅`);
+			// setDeployLink(`https://hashscan.io/${network}/address/${newContractAddress}`);
+			// setSetterGroupText("Store a part name and corresponding amount on-chain");
 		}
 	}
 
-	async function snapGetAccountInfo() {
+	async function contractDeploy() {
 		if (account === undefined) {
 			setDeployText("🛑Connect a wallet first!🛑");
 		} else if (contract !== undefined) {
 			setDeployText(`You already have contract ${contract} ✅`);
 		} else {
-			const newContractAddress = await snapGetAccountInfoFcn(walletData);
-			setDeployText(`Deployed contract ${newContractAddress} ✅`);
-			setDeployLink(`https://hashscan.io/${network}/address/${newContractAddress}`);
-			setSetterGroupText("Store a part name and corresponding amount on-chain");
-		}
-	}
-
-	async function snapTransferCrypto() {
-		if (account === undefined) {
-			setDeployText("🛑Connect a wallet first!🛑");
-		} else if (contract !== undefined) {
-			setDeployText(`You already have contract ${contract} ✅`);
-		} else {
-			const newContractAddress = await snapTransferCryptoFcn(walletData);
+			const newContractAddress = await contractDeployFcn(walletData);
+			setContract(newContractAddress);
 			setDeployText(`Deployed contract ${newContractAddress} ✅`);
 			setDeployLink(`https://hashscan.io/${network}/address/${newContractAddress}`);
 			setSetterGroupText("Store a part name and corresponding amount on-chain");
@@ -159,11 +147,9 @@ function App() {
 
 			<MyGroup fcn={snapInstall} buttonLabel={"Install Snap"} text={snapText} link={""} />
 
-			<MyGroup fcn={snapGetAccountInfo} buttonLabel={"Snap - Get Account Info"} text={deployText} link={""} />
+			<MyGroup fcn={contractDeploy} buttonLabel={"Deploy Contract"} text={deployText} link={deployLink} />
 
-			<MyGroup fcn={snapTransferCrypto} buttonLabel={"Snap - Transfer HBAR"} text={deployText} link={""} />
-
-			{/* <SetterGroup
+			<SetterGroup
 				text_app={setterGroupText}
 				link_app={setterGroupLink}
 				//
@@ -185,9 +171,9 @@ function App() {
 				//
 				fcnB1_app={contractCallView}
 				buttonLabel_app={"Get Info"}
-			/> */}
+			/>
 
-			{/* <MyText text={amountText} /> */}
+			<MyText text={amountText} />
 
 			<div className="logo">
 				<div className="symbol">
