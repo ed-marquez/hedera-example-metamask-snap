@@ -84,7 +84,7 @@ function App() {
 		if (account === undefined) {
 			setSnapTransferText("🛑Connect a wallet first!🛑");
 		} else {
-			setSnapTransferText(`Storing ${hbarAmount} unit(s) of ${receiverAddress} on-chain...`);
+			setSnapTransferText(`Transfering...`);
 
 			// const [txHash, outText] = await snapTransferCryptoFcn(walletData, snapId, [sPartName, sPartAmount]);
 			await snapTransferCryptoFcn(network, walletData, snapId, [receiverAddress, hbarAmount]);
