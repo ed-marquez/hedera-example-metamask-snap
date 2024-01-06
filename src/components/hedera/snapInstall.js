@@ -23,8 +23,6 @@ async function snapInstallFcn(snapId) {
 			snaps = await window.ethereum.request({
 				method: "wallet_getSnaps",
 			});
-			outText = "Snap installation complete ✅";
-			console.log(`- Connected successfully ✅`);
 		}
 	} catch (e) {
 		console.log(`Failed to obtain installed snap: ${JSON.stringify(e, null, 4)}`);
@@ -32,9 +30,9 @@ async function snapInstallFcn(snapId) {
 	}
 
 	if (snapId in snaps) {
-		outText = "Snap installation complete ✅";
-		console.log(`- Connected successfully ✅`);
-		alert("Connected successfully!");
+		outText = "Snap installed ✅";
+		console.log(`- Snap installed successfully ✅`);
+		alert("Snap installed successfully!");
 	} else {
 		console.log("Could not connect successfully. Please try again!");
 		alert("Could not connect successfully. Please try again!");

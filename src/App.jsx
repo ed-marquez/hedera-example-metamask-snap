@@ -8,10 +8,10 @@ import snapTransferHbarFcn from "./components/hedera/snapTransferHbar.js";
 import "./styles/App.css";
 
 function App() {
-	const snapId = useState("npm:@hashgraph/hedera-wallet-snap");
+	const [snapId] = useState("npm:@hashgraph/hedera-wallet-snap");
 	const [walletData, setWalletData] = useState();
 	const [account, setAccount] = useState();
-	const network = useState("previewnet");
+	const [network] = useState(`previewnet`);
 	const [receiverAddress, setReceiverAddress] = useState();
 	const [hbarAmount, setHbarAmount] = useState();
 
@@ -22,7 +22,6 @@ function App() {
 
 	const [connectLink, setConnectLink] = useState("");
 	const [infoLink, setInfoLink] = useState("");
-	// const [transferGroupLink, setTransferGroupLink] = useState("");
 
 	async function connectWallet() {
 		if (account !== undefined) {
