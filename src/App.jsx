@@ -11,7 +11,7 @@ function App() {
 	const [snapId] = useState("npm:@hashgraph/hedera-wallet-snap");
 	const [walletData, setWalletData] = useState();
 	const [account, setAccount] = useState();
-	const [network] = useState(`previewnet`);
+	const [network] = useState(`testnet`);
 	const [receiverAddress, setReceiverAddress] = useState();
 	const [hbarAmount, setHbarAmount] = useState();
 
