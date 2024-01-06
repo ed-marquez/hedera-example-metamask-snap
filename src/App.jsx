@@ -84,7 +84,7 @@ function App() {
 		if (account === undefined || snapInstallText === undefined || snapInfoText === undefined) {
 			setSnapTransferText("🛑Complete all the steps above first!🛑");
 		} else {
-			setSnapTransferText(`Transfering...`);
+			setSnapTransferText(`Transferring...`);
 			const transferText = await snapTransferHbarFcn(network, walletData, snapId, [receiverAddress, hbarAmount]);
 			setSnapTransferText(`${transferText}`);
 		}
