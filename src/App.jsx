@@ -92,7 +92,7 @@ function App() {
 
 	return (
 		<div className="App">
-			<h1 className="header">Use the Hedera Wallet Snap for MetaMask!</h1>
+			<h1 className="header">Try the Hedera Wallet Snap for MetaMask!</h1>
 
 			<MyGroup fcn={connectWallet} buttonLabel={"Connect Wallet"} text={connectText} link={connectLink} />
 
