@@ -10,9 +10,9 @@ Fork the repo. Once you have it locally, run:
 
 # Process
 
-1. Pair the wallet, select network, and MetaMask account
+1. Pair MetaMask wallet (select network and account)
 2. Install the Hedera Wallet Snap
-3. Connect the Hedera Wallet Snap to the MetaMask account (done as part of invoking a method for the first time)
-4. Send HBAR or tokens to the Snap EVM address to create the actual Snap account
-5. Call Hedera Wallet Snap methods: `hello`, `getCurrentAccount`, `getAccountInfo`, `transferCrypto`
+3. Get the snap EVM address and send it HBAR to create the corresponding snap account
+4. Get the snap account info again to see its balance (and to connect the Hedera Wallet Snap to the MetaMask account - this is done as part of invoking a method for the first time)
+5. Call other methods in the Hedera Wallet Snap as desired: `getAccountInfo`, `transferCrypto`
 6. Display info and/or results in the console and UI
