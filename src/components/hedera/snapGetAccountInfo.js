@@ -19,7 +19,9 @@ async function snapGetAccountInfoFcn(network, walletData, snapId) {
 
 	const snapAccountEvmAddress = response.accountInfo.evmAddress;
 	const snapAccountBalance = response.accountInfo.balance.hbars;
-	const outText = `Snap Account ${snapAccountEvmAddress} has ${snapAccountBalance} ℏ`;
-	return [outText];
+	const outText = `Snap Account ${snapAccountEvmAddress} has ${snapAccountBalance} ℏ ✅`;
+
+	console.log(`- Got account info ✅`);
+	return [snapAccountEvmAddress, outText];
 }
 export default snapGetAccountInfoFcn;

@@ -4,14 +4,14 @@ import SetterGroup from "./components/SetterGroup.jsx";
 import walletConnectFcn from "./components/hedera/walletConnect.js";
 import snapInstallFcn from "./components/hedera/snapInstall.js";
 import snapGetAccountInfoFcn from "./components/hedera/snapGetAccountInfo.js";
-import snapTransferCryptoFcn from "./components/hedera/snapTransferCrypto.js";
+import snapTransferHbarFcn from "./components/hedera/snapTransferHbar.js";
 import "./styles/App.css";
 
 function App() {
-	const [snapId, setSnapId] = useState("npm:@hashgraph/hedera-wallet-snap");
+	const snapId = useState("npm:@hashgraph/hedera-wallet-snap");
 	const [walletData, setWalletData] = useState();
 	const [account, setAccount] = useState();
-	const [network, setNetwork] = useState("previewnet");
+	const network = useState("previewnet");
 	const [receiverAddress, setReceiverAddress] = useState();
 	const [hbarAmount, setHbarAmount] = useState();
 
@@ -22,7 +22,7 @@ function App() {
 
 	const [connectLink, setConnectLink] = useState("");
 	const [infoLink, setInfoLink] = useState("");
-	const [transferGroupLink, setTransferGroupLink] = useState("");
+	// const [transferGroupLink, setTransferGroupLink] = useState("");
 
 	async function connectWallet() {
 		if (account !== undefined) {
@@ -47,60 +47,53 @@ function App() {
 		if (account === undefined) {
 			setSnapInstallText("🛑Connect a wallet first!🛑");
 		} else {
-			await snapInstallFcn(snapId);
-			setSnapInstallText(`Snap installation OK ✅`);
+			const newSnapInstallText = await snapInstallFcn(snapId);
+			setSnapInstallText(newSnapInstallText);
+			setSnapInfoText();
 		}
 	}
 
 	async function snapGetAccountInfo() {
-		if (account === undefined) {
-			setSnapInfoText("🛑Connect a wallet first!🛑");
+		if (account === undefined || snapInstallText === undefined) {
+			setSnapInfoText("🛑Connect a wallet and install the snap first!🛑");
 		} else {
-			const infoText = await snapGetAccountInfoFcn(network, walletData, snapId);
+			const [snapAccountAddress, infoText] = await snapGetAccountInfoFcn(network, walletData, snapId);
 			setSnapInfoText(infoText);
-			// setDeployText(`Deployed contract ${newContractAddress} ✅`);
-			// setDeployLink(`https://hashscan.io/${network}/address/${newContractAddress}`);
+			setInfoLink(`https://hashscan.io/${network}/address/${snapAccountAddress}`);
+			setSnapTransferText();
 		}
 	}
 
-	function handle_AdressChange(event) {
-		let newAddress = event.target.value;
-		if (newAddress === "") {
+	function handle_ReceiverAddressChange(event) {
+		let newReceiverAddress = event.target.value;
+		if (newReceiverAddress === "") {
 			setReceiverAddress();
 		} else {
-			setReceiverAddress(newAddress);
+			setReceiverAddress(newReceiverAddress);
 		}
 	}
-	function handle_AmountChange(event) {
-		let newAmount = event.target.value;
-		if (newAmount === "") {
+	function handle_HbarAmountChange(event) {
+		let newHbarAmount = event.target.value;
+		if (newHbarAmount === "") {
 			setHbarAmount();
 		} else {
-			setHbarAmount(newAmount);
+			setHbarAmount(newHbarAmount);
 		}
 	}
 
-	async function snapTransferCrypto() {
-		if (account === undefined) {
-			setSnapTransferText("🛑Connect a wallet first!🛑");
+	async function snapTransferHbar() {
+		if (account === undefined || snapInstallText === undefined || snapInfoText === undefined) {
+			setSnapTransferText("🛑Complete all the steps above first!🛑");
 		} else {
 			setSnapTransferText(`Transfering...`);
-
-			// const [txHash, outText] = await snapTransferCryptoFcn(walletData, snapId, [sPartName, sPartAmount]);
-			await snapTransferCryptoFcn(network, walletData, snapId, [receiverAddress, hbarAmount]);
-
-			// if (txHash !== undefined && outText !== undefined) {
-			// 	setSetterGroupText(`${outText} | Store a new part name and corresponding amount!`);
-			// 	set_setterGroupLink(`https://hashscan.io/${network}/tx/${txHash}`);
-			// } else {
-			// 	setSetterGroupText(`Transaction failed - try again 🔴`);
-			// }
+			const transferText = await snapTransferHbarFcn(network, walletData, snapId, [receiverAddress, hbarAmount]);
+			setSnapTransferText(`${transferText}`);
 		}
 	}
 
 	return (
 		<div className="App">
-			<h1 className="header">Write and read on-chain data on Hedera!</h1>
+			<h1 className="header">Use the Hedera Wallet Snap for MetaMask!</h1>
 
 			<MyGroup fcn={connectWallet} buttonLabel={"Connect Wallet"} text={connectText} link={connectLink} />
 
@@ -110,15 +103,14 @@ function App() {
 
 			<SetterGroup
 				text_app={snapTransferText}
-				link_app={transferGroupLink}
 				//
-				fcnI1_app={handle_AdressChange}
+				fcnI1_app={handle_ReceiverAddressChange}
 				placeholderTxt1_app={"Receiver address"}
 				//
-				fcnI2_app={handle_AmountChange}
+				fcnI2_app={handle_HbarAmountChange}
 				placeholderTxt2_app={"HBAR amount"}
 				//
-				fcnB1_app={snapTransferCrypto}
+				fcnB1_app={snapTransferHbar}
 				buttonLabel_app={"Transfer HBAR w/ Snap"}
 			/>
 
