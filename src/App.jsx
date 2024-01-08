@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MyGroup from "./components/MyGroup.jsx";
-import MySendGroup from "./components/SetterGroup.jsx";
+import MySendGroup from "./components/MySendGroup.jsx";
 import walletConnectFcn from "./components/hedera/walletConnect.js";
 import snapInstallFcn from "./components/hedera/snapInstall.js";
 import snapGetAccountInfoFcn from "./components/hedera/snapGetAccountInfo.js";
