@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MyGroup from "./components/MyGroup.jsx";
-import SetterGroup from "./components/SetterGroup.jsx";
+import MySendGroup from "./components/SetterGroup.jsx";
 import walletConnectFcn from "./components/hedera/walletConnect.js";
 import snapInstallFcn from "./components/hedera/snapInstall.js";
 import snapGetAccountInfoFcn from "./components/hedera/snapGetAccountInfo.js";
@@ -100,7 +100,7 @@ function App() {
 
 			<MyGroup fcn={snapGetAccountInfo} buttonLabel={"Get Snap Account Info"} text={snapInfoText} link={infoLink} />
 
-			<SetterGroup
+			<MySendGroup
 				text_app={snapTransferText}
 				//
 				fcnI1_app={handle_ReceiverAddressChange}

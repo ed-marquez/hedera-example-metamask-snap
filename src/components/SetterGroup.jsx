@@ -1,9 +1,9 @@
 import React from "react";
-import MyInputBox from "./myInputBox";
+import MyInputBox from "./MyInputBox";
 import MyButton from "./MyButton";
 import MyText from "./MyText";
 
-function SetterGroup(props) {
+function MySendGroup(props) {
 	return (
 		<div>
 			<MyText text={props.text_app} link={props.link_app} />
@@ -16,4 +16,4 @@ function SetterGroup(props) {
 	);
 }
 
-export default SetterGroup;
+export default MySendGroup;
