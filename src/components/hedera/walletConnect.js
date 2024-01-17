@@ -1,4 +1,3 @@
-import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers } from "ethers";
 
 async function walletConnectFcn(network) {
